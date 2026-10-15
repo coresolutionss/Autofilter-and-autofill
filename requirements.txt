@@ -1,0 +1,5 @@
+streamlit>=1.40,<2
+Pillow>=10,<13
+zxing-cpp>=2.2,<4
+passporteye>=2.2,<3
+pytesseract>=0.3.13,<1
