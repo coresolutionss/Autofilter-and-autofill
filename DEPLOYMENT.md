@@ -1,6 +1,6 @@
 # Streamlit Community Cloud deployment
 
-This deployment keeps the existing upload/camera, extraction, review, save/reopen,
+This deployment keeps the existing upload, extraction, review, save/reopen,
 PDF/HTML/JSON/CSV/ZIP export, original attachments, duplicate prevention, and AMB UI.
 No login system or new customer workflow is added. Use synthetic test documents.
 
@@ -45,8 +45,8 @@ deployment branch rather than the Windows checkout's `main` branch.
 
 In Streamlit Community Cloud, select **Create app**, enter the settings above,
 configure secrets, and deploy. Streamlit provides the HTTPS URL to share with the
-client. Upload and camera capture work through that HTTPS page; camera access
-requires the browser/device's normal camera permission.
+client. File uploads work through that HTTPS page. The Source selector and in-app
+camera option were removed at the client's request; photos can be uploaded as files.
 
 ## Validation
 

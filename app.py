@@ -313,12 +313,7 @@ with collect_tab:
         subject = b.selectbox("Document belongs to", ["Owner", "Spouse", "Business", "Other"], key="subject:" + work["id"])
         country_choice = c.selectbox("Issuing country / tax jurisdiction", ["USA", "Mexico", "Other / unspecified"], key="country-choice:" + work["id"])
         country = c.text_input("Country name", key="country:" + work["id"]) if country_choice == "Other / unspecified" else country_choice
-        source = st.radio("Source", ["Upload files", "Take photo"], horizontal=True, key="source:" + work["id"])
-        if source == "Upload files":
-            uploads = st.file_uploader("JPG, PNG or PDF · 10 MB per file · 5 pages per PDF", type=["jpg", "jpeg", "png", "pdf"], accept_multiple_files=True, key="uploads:" + work["id"])
-        else:
-            camera = st.camera_input("Photograph document", key="camera:" + work["id"])
-            uploads = [camera] if camera else []
+        uploads = st.file_uploader("JPG, PNG or PDF · 10 MB per file · 5 pages per PDF", type=["jpg", "jpeg", "png", "pdf"], accept_multiple_files=True, key="uploads:" + work["id"])
         analyze_on_add = st.checkbox("Analyze documents and fill empty review fields when added", value=True, key="analyze-on-add:" + work["id"])
         if st.button("Add documents to application", disabled=not uploads, type="primary"):
             previous_count = len(work["documents"])
