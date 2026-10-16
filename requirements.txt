@@ -1,0 +1,11 @@
+streamlit==1.66.0
+Pillow==12.3.0
+zxing-cpp==3.1.1
+passporteye==2.2.2
+pytesseract==0.3.13
+opencv-python-headless==5.0.0.93
+numpy==2.5.4
+PyMuPDF==1.28.2
+# Groq vision requests and local credential configuration (also used by legacy adapters):
+requests==2.34.2
+python-dotenv==1.2.4

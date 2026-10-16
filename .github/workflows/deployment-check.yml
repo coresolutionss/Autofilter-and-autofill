@@ -1,0 +1,38 @@
+name: Streamlit deployment compatibility
+on:
+  push:
+    branches: [codex/streamlit-deployment]
+  workflow_dispatch:
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      EXTRACTION_PROVIDER: local
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install Linux OCR dependencies
+        run: sudo apt-get update && sudo apt-get install -y $(cat packages.txt)
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Verify installed dependency compatibility
+        run: python -m pip check
+      - name: Run application regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Exercise real OCR and generated PDF417 on synthetic documents
+        run: python deployment_check.py
+      - name: Start Streamlit and verify health
+        shell: bash
+        run: |
+          python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8501 --server.headless true > /tmp/intake-streamlit.log 2>&1 &
+          trap 'kill $! 2>/dev/null || true' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8501/_stcore/health; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/intake-streamlit.log
+          exit 1
