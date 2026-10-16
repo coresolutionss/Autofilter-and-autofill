@@ -39,11 +39,12 @@ def main():
         env = dict(os.environ, GIT_INDEX_FILE=str(Path(folder) / 'deployment.index'))
         def git(*args, input=None):
             return subprocess.check_output(['git', *args], cwd=ROOT, env=env, input=input, text=True).strip()
-        git('read-tree', '--empty')
-        git('add', '--', *files)
-        tree = git('write-tree')
         old = subprocess.run(['git', 'rev-parse', '--verify', 'refs/heads/' + BRANCH],
             cwd=ROOT, env=env, text=True, capture_output=True)
+        # Later snapshots preserve deployment-only files added on the branch.
+        git('read-tree', old.stdout.strip() if old.returncode == 0 else '--empty')
+        git('add', '--', *files)
+        tree = git('write-tree')
         parents = ['-p', old.stdout.strip()] if old.returncode == 0 else []
         # First snapshot deliberately has no parent: do not upload the historical
         # Windows virtual environment or machine-local configuration.
