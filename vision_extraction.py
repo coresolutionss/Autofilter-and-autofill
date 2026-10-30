@@ -6,8 +6,8 @@ import json
 import os
 from pathlib import Path
 
-from dotenv import dotenv_values
 import requests
+from project_settings import settings
 
 IDENTITY_FIELDS = {
     'first_name', 'middle_name', 'last_name', 'full_name', 'date_of_birth',
@@ -21,8 +21,7 @@ DEFAULT_MODEL = 'qwen/qwen3.8-27b'
 
 def configuration():
     # Read on each action so rotating a key does not require restarting the app.
-    values = dotenv_values(Path(__file__).resolve().parent / '.env')
-    values.update(dotenv_values(Path(__file__).resolve().parent / '.env.groq.local'))
+    values = settings()
     def setting(key, default=''):
         return os.environ.get(key, values.get(key) or default)
     return {'provider': setting('EXTRACTION_PROVIDER', 'local'),

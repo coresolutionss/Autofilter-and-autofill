@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 .env
 .env.groq.local
+.env.digisigner.local
+.streamlit/secrets.toml
 private_uploads/
 private_applications/
 tmp/

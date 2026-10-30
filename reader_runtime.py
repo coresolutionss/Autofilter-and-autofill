@@ -10,9 +10,9 @@ from pathlib import Path
 import threading
 
 ROOT = Path(__file__).resolve().parent
-READER_MODULES = ("ui_theme", "form_config", "pdf_form_layout", "pdf_form_export", "pdf_form_editor",
+READER_MODULES = ("project_settings", "ui_theme", "form_config", "pdf_form_layout", "pdf_form_export", "pdf_form_editor",
                   "barcode_reader", "pdf_reader", "photo_preprocessing", "license_front_reader",
-                  "vision_extraction", "intake_extraction")
+                  "vision_extraction", "intake_extraction", "digisigner_workflow", "digisigner_ui")
 _loaded_sources = {}
 _lock = threading.RLock()
 

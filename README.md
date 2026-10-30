@@ -1,6 +1,6 @@
 # AMB local document intake
 
-A Streamlit application for preparing **New Account Applications** and **Customer Information Changes** using the supplied AMB forms as field references. There are no DigiSigner calls in the active workflow. Signature capture, contractual acceptance, and filling the original PDF layouts are outside this version.
+A Streamlit application for preparing **New Account Applications** and **Customer Information Changes** using the supplied AMB forms as field references. Reviewed snapshots can be uploaded to DigiSigner using their completed AMB PDFs. Signing links, manual status checks and completed-PDF downloads are available after review; original documents and editable exports are preserved.
 
 ## Run on Windows
 
@@ -57,7 +57,7 @@ Minimum fields for a reviewed account: company name, owner given names/surname, 
 
 This is a local, trusted-staff app. Data and exports contain personal information and are not encrypted by the application. POSIX permission hints do not establish Windows access control. Restrict the folder using Windows permissions and disk encryption; do not expose the app publicly. There is no authentication, automatic retention policy, cloud backup, or multi-user account isolation. Unsaved data is lost when the session ends. Old `private_uploads` files are preserved but are not automatically imported.
 
-Existing extraction modules and the DigiSigner adapter remain available as legacy code. The active app uses `form_config.py`, `intake_extraction.py`, and `application_store.py`. The pre-change `app.py` was preserved locally at `tmp/app_before_local_workflow.py`.
+The older template-based DigiSigner adapter remains as legacy code. The active signing flow uses `digisigner_workflow.py` and `digisigner_ui.py`, alongside `form_config.py`, `intake_extraction.py`, and `application_store.py`. The pre-change `app.py` was preserved locally at `tmp/app_before_local_workflow.py`.
 
 ## Verify
 

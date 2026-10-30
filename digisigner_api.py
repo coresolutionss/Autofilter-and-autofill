@@ -1,9 +1,7 @@
 """DigiSigner API adapter for the previously tested account-application template."""
-import os
 import requests
-from dotenv import load_dotenv
+from project_settings import settings
 
-load_dotenv()
 API_URL = "https://api.digisigner.com/v1/signature_requests"
 FIELD_API_IDS = {
     "first_name": "5eebd524-e2be-49c0-9eda-d42d50101ba9",
@@ -21,10 +19,11 @@ FIELD_API_IDS = {
 }
 
 def create_signing_request(data, signer_email):
-    api_key = os.getenv("DIGISIGNER_API_KEY", "").strip()
-    template_id = os.getenv("DIGISIGNER_TEMPLATE_ID", "").strip()
+    config = settings()
+    api_key = str(config.get("DIGISIGNER_API_KEY", "")).strip()
+    template_id = str(config.get("DIGISIGNER_TEMPLATE_ID", "")).strip()
     if not api_key or not template_id:
-        raise ValueError("Missing DIGISIGNER_API_KEY or DIGISIGNER_TEMPLATE_ID in .env")
+        raise ValueError("Missing DigiSigner API key or template ID in local configuration or hosting secrets")
     if not signer_email or "@" not in signer_email:
         raise ValueError("A valid signer email is required")
     existing_fields = [

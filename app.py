@@ -32,6 +32,7 @@ from pdf_form_editor import render_editor
 from pdf_form_export import application_pdf
 from document_collection import document_hash, remove_duplicate_documents
 from ui_theme import apply_theme, render_brand
+from digisigner_ui import render_signing_controls
 
 st.set_page_config(page_title="AMB Document Intake", page_icon="📄", layout="wide")
 apply_theme()
@@ -313,12 +314,7 @@ with collect_tab:
         subject = b.selectbox("Document belongs to", ["Owner", "Spouse", "Business", "Other"], key="subject:" + work["id"])
         country_choice = c.selectbox("Issuing country / tax jurisdiction", ["USA", "Mexico", "Other / unspecified"], key="country-choice:" + work["id"])
         country = c.text_input("Country name", key="country:" + work["id"]) if country_choice == "Other / unspecified" else country_choice
-        source = st.radio("Source", ["Upload files", "Take photo"], horizontal=True, key="source:" + work["id"])
-        if source == "Upload files":
-            uploads = st.file_uploader("JPG, PNG or PDF · 10 MB per file · 5 pages per PDF", type=["jpg", "jpeg", "png", "pdf"], accept_multiple_files=True, key="uploads:" + work["id"])
-        else:
-            camera = st.camera_input("Photograph document", key="camera:" + work["id"])
-            uploads = [camera] if camera else []
+        uploads = st.file_uploader("JPG, PNG or PDF · 10 MB per file · 5 pages per PDF", type=["jpg", "jpeg", "png", "pdf"], accept_multiple_files=True, key="uploads:" + work["id"])
         analyze_on_add = st.checkbox("Analyze documents and fill empty review fields when added", value=True, key="analyze-on-add:" + work["id"])
         if st.button("Add documents to application", disabled=not uploads, type="primary"):
             previous_count = len(work["documents"])
@@ -357,6 +353,9 @@ with review_tab:
     entry, preview = st.columns([7, 3], gap="large")
     with entry:
         render_editor(form_type, current_fields(work), "pdf-editor:" + work["id"], lambda: apply_pdf_edit(work))
+        if form_type == "information_change":
+            work["fields"]["change_reason"] = st.text_area("Reason / description of change",
+                value=current_fields(work).get("change_reason", ""), key=field_key(work, "change_reason"))
         work["fields"] = current_fields(work)
         st.button("Continue to Save & report", key="next-save-bottom:" + work["id"],
             on_click=go_to_step, args=(work, STEPS[2]))
@@ -417,6 +416,7 @@ with save_tab:
         except (OSError, ValueError) as exc:
             st.error(f"Could not read saved attachments: {exc}")
         st.caption("The completed AMB PDF uses the original form layout and keeps fields editable. Signatures are collected separately. The ZIP includes the PDF, report, JSON, CSV, and unchanged original files. Additional document details without a printed box are included in the report and field data.")
+        render_signing_controls(record, saved["digest"] == digest)
 
 with records_tab:
     st.subheader("Saved local snapshots")
@@ -436,6 +436,8 @@ with records_tab:
                 record, documents = load_application(selected_id)
                 loaded = workspace(record["form_type"], record["fields"], documents)
                 loaded.update(reviewer=record["reviewer"], notes=record["notes"])
+                loaded["saved"] = {"record": record, "digest": fingerprint(record["form_type"], record["fields"],
+                    documents, record["reviewer"], record["notes"])}
                 st.session_state.workspaces[record["form_type"]] = loaded
                 st.session_state["pending_form"] = record["form_type"]
                 st.rerun()
